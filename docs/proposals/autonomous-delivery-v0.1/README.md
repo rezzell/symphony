@@ -22,6 +22,11 @@ This package is a reviewable proposal, not an approved company operating standar
 | [Resources and telemetry](RESOURCES-AND-TELEMETRY.md) | Time, usage, provider profiles, allocation, routing, and OpenTelemetry investigation requirements. |
 | [Implementation plan](IMPLEMENTATION-PLAN.md) | Repository allocation, migration, work packages, dependencies, and acceptance gates. |
 | [Decisions and conformance](DECISIONS-AND-CONFORMANCE.md) | Confirmed design inputs, unresolved choices, and test scenarios. |
+| [D02 continuation review](D02-CONTINUATION-REVIEW.md) | Proposed D02-r1 amendment: controlled continuation, unexpected interruption, full-handoff promotion, explicit work-scope/item-run mapping, and planned T37-T52 scenarios. |
+
+### First bounded review: D02
+
+Review [D02-r1](D02-CONTINUATION-REVIEW.md) against the relevant identity, continuity and phase clauses and the existing D02 entry. Preserve C01-C10; do not repeat the original harness investigation or select runtime technology as part of this review. D02-r1 contains proposed replacement/addition text, not effective contract changes or approval. The existing T01-T36 scenarios remain unchanged; T37-T52 are planned additions, not passing tests. Consolidation into the base proposal requires an explicit review disposition for an identified revision. No company standard is changed by publication.
 
 ## Design boundary
 
@@ -76,4 +81,4 @@ Public source references are provided for reproducibility; private governance so
 
 Only proposal documentation is supplied by this change. Schemas, validators, adapters, executable conformance tests, dashboards, and the Rust host are planned deliverables. No implementation issue is automatically admitted for autonomous execution, and no company standard is superseded.
 
-The recommended next action is to review the blocking decisions in [Decisions and conformance](DECISIONS-AND-CONFORMANCE.md), then authorize a bounded contract-extraction and conformance work package. Do not interpret this plan as permission to implement all milestones without limits.
+The next action is the bounded D02 review and explicit disposition of its identity, continuity and promotion recommendations. Other blocking decisions remain open. Any later contract extraction or implementation work package needs separately verified scope, acceptance criteria, permitted mutations and finite allowances; this plan does not authorize execution of all milestones.
