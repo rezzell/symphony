@@ -1,8 +1,10 @@
 # D02 review: continuation, interruption, and full-handoff promotion
 
 Status: **Proposed — not adopted**  
-Review revision: **D02-r1**  
+Review revision: **D02-r2**  
 Prepared: **2026-11-16**  
+Revised: **2026-11-17**  
+Prior review revision: **D02-r1 at d74e8e70a7559b2bfd18c511328bd9dc50ee01a7**  
 Proposal comparison baseline: **093a8ac653a720047f1829ffaa5eb3f5c62c7f08**  
 ai-sdlc comparison baseline: **c993fa3a642cfcb95afa05f7d0a4749569872549**
 
@@ -56,14 +58,26 @@ Compatibility: mapping the existing ai-sdlc item-scoped `run_id` can be lossless
 
 A controller MAY continue from an intra-run checkpoint only when **all** of the following are verified:
 
-1. The applicable, revision-bound lifecycle/adoption profile explicitly permits that exchange; no required source is missing, ambiguous, or stale.
+1. The applicable, revision-bound lifecycle/adoption profile is authorized for use in this scope and explicitly permits this exchange; no required source is missing, ambiguous, or stale. An approved bootstrap/context manifest, context-selection profile, or runtime capability declaration does not supply that permission by itself.
 2. Authorization, governing requirement, outcome/work scope, delivery item, project, confidentiality and resumability bindings remain compatible with the authorized next action.
 3. There is no full-handoff trigger, new authority/decision boundary, independent coordination transfer, external Waiting/Blocked state, budget exhaustion, or closeout boundary.
 4. A checkpoint contains immutable input/output references, verification posture, outstanding findings, effect disposition, cumulative accounting references, current ownership evidence, and one bounded next action.
-5. The designated receiver/controller has durably recorded and acknowledged acceptance of that checkpoint. The old actor cannot make conflicting mutations: it is verified quiescent or effectively fenced. Publication alone is not acceptance; a timeout or lease expiry is not fencing.
+5. The designated receiver/controller has durably recorded and acknowledged positive acceptance of that exact checkpoint for the bounded next transition, with the acceptance evidence described below. The old actor cannot make conflicting mutations: it is verified quiescent or effectively fenced. Publication or a producer-supplied acceptance flag alone is not controller acceptance; a timeout or lease expiry is not fencing.
 6. Before dispatch, the controller revalidates owner-system revisions, claim generation, policy/authorization and remaining allowances. Unknown side effects or unresolved accounting cannot be treated as zero or absent.
 
-Checkpoint storage, a fresh worker, context compaction, or a new trace alone neither requires nor exempts a full handoff. A checkpoint is a validated receipt; it is not a permission grant or independent delivery backlog entry.
+Checkpoint storage, a fresh worker, context compaction, or a new trace alone neither requires nor exempts a full handoff. A checkpoint is a continuation-oriented stage receipt, not proof of its own acceptance, a permission grant, or an independent delivery backlog entry.
+
+**Evidence roles:** distinguish the worker's reported result, the checkpoint's continuation state, and the controller's acceptance of that checkpoint. These roles may share a versioned artifact, but their identities, provenance and validation evidence MUST remain distinguishable; this does not require separate files, services or a new storage technology.
+
+| Evidence role | Meaning and limit |
+| --- | --- |
+| Worker receipt | Producer-attributed result of the dispatched phase/attempt, bound to immutable inputs and outputs. Its status and handoff flag do not approve a transition. |
+| Intra-run checkpoint | Bounded continuation evidence that carries or references the stage receipt plus the state required by D02-C1. Persistence makes it available for validation, not automatically accepted. |
+| Controller acceptance record | Designated receiver/controller's positive validation of an exact checkpoint for a bounded next transition. It records evidence checks; it does not create policy permission, transfer ownership, or eliminate pre-dispatch revalidation. |
+
+The acceptance record MUST bind the checkpoint identity/revision, referenced receipt and input/output revisions, item/run/phase/attempt identity, claim generation, validator identity and actual validation time, applicable contract/authorization/profile revisions, effect/ownership/accounting evidence checked, and the bounded next action. A generic acknowledgement of receipt, an acceptance for another revision or attempt, or the producer's unvalidated assertion cannot satisfy this predicate. A single implementation may perform producer and controller roles only while preserving their distinct provenance and the required controller checks.
+
+An **accepted checkpoint** means that the exact checkpoint and its positive controller-acceptance evidence can both be verified. It is not a fourth, independently authoritative object. Acceptance is necessary but not sufficient for dispatch: all six conditions above, including current ownership safety and remaining allowance, still apply. Missing acceptance inhibits continuation; it is not by itself evidence of a crash. Loss of required continuity is classified separately under D02-C3.
 
 ### D02-C2 — amend CONT-02: mandatory promotion boundaries
 
@@ -107,8 +121,10 @@ Amend PHASE-05 and PHASE-08 to require D02-C1's accepted checkpoint predicate an
 
 | Record | Required D02 additions or clarified evidence |
 | --- | --- |
-| Dispatch/checkpoint | Explicit work-scope/item-run mapping; policy and authorization revisions; checkpoint acceptance reference; ownership safety evidence; ledger/reservation references; bounded next action. |
-| Worker receipt | Existing `full_handoff_required` remains advisory evidence. The controller independently evaluates triggers; a false flag cannot suppress a required handoff. |
+| Dispatch | Explicit work-scope/item-run mapping; contract, policy and authorization revisions; ownership safety and ledger/reservation references; bounded next action. When consuming a predecessor checkpoint, reference that checkpoint and its acceptance evidence. An initial dispatch does not require acceptance of a future checkpoint. |
+| Worker receipt | Producer and dispatched phase/attempt identity; immutable input/output and evidence references. Existing `full_handoff_required` remains advisory evidence. The controller independently evaluates triggers; a false flag cannot suppress a required handoff. |
+| Intra-run checkpoint | Checkpoint identity/revision; carried or referenced stage receipt; continuation state required by D02-C1. Do not equate successful persistence with positive controller acceptance. |
+| Controller acceptance record | The exact bindings and positive validation evidence required by D02-C1, including the applicable permitting-profile revision and bounded next transition. Keep producer assertions distinct from receiver/controller validation. |
 | Recovery observation | `record_kind` distinct from worker receipt; observer identity; interrupted run/phase/attempt; failure/event identity; last verified checkpoint; actual observation time; observed/unknown effects; ownership and accounting reconciliation; next safe action. No invented worker completion timestamp or success. |
 | Promotion obligation | Stable obligation ID; trigger(s); run/scope identities; policy revision; packet artifact/version; required coordination targets; persistence/link verification; claim disposition; resume predicates. |
 
@@ -118,7 +134,11 @@ Retain existing receipt statuses; do not disguise a recovery observation as `suc
 
 ## 6. Normal and failure examples
 
-**Normal controlled exchange:** implementation produces a receipt for immutable revision `rev-A`; the controller validates it, records checkpoint acceptance and verifies the writer is stopped/fenced. The same item run enters an already-authorized review phase under its permitting profile. A fresh worker/trace is diagnostic change only. Review consumption is charged to the existing scope ledger.
+**Normal controlled exchange:** implementation produces receipt `receipt-A` and checkpoint `checkpoint-A` for immutable revision `rev-A`; the controller records acceptance `acceptance-A` bound to those exact identities and the permitting-profile revision, and verifies the writer is stopped/fenced. The same item run enters an already-authorized review phase under its permitting profile. A fresh worker/trace is diagnostic change only. Review consumption is charged to the existing scope ledger.
+
+**Receipt without acceptance:** the worker returns a successful receipt and persists a checkpoint while the controller remains available. Delivery does not advance until the controller validates and records acceptance and every other eligibility condition holds. This incomplete exchange is not automatically an interruption. If the worker disappears before the controlled exchange is established, D02-C3 applies instead. An acknowledgement for another attempt or checkpoint revision does not repair the gap.
+
+**Context approval without permission:** a bootstrap/context manifest is approved and selects the review sources, but no applicable lifecycle/adoption profile explicitly permits checkpoint-only exchange. Even with a valid checkpoint and verified ownership, the controller does not infer permission or redispatch. It records the missing binding and follows the required handoff/escalation path. Technical proposal adoption alone would not supply the missing profile permission.
 
 **Crash after a consequential write:** a worker creates a PR and dies before returning its receipt. Recovery finds the PR using operation/owner-system evidence. It does not create a second PR or invent a successful worker receipt. A full handoff is persisted and linked even if all effects can be reconstructed. Resumption checks current PR head, authority, claim, policy and budget.
 
@@ -130,16 +150,16 @@ These extend the existing T01-T36 catalog. All are **planned scenarios, not impl
 
 | ID | Given / when | Required observable result | Clauses |
 | --- | --- | --- | --- |
-| T37 | Permitting profile; same item/run and scope; accepted checkpoint; old writer quiescent/fenced; fresh review worker. | Continue without automatic full handoff; preserve run, authority and budget; create the appropriate phase/attempt and diagnostic links. | D02-ID1, C1; extends T21/T32 |
-| T38 | Same checkpoint, but permission is absent, profile is unapproved for use, or its revision cannot be verified. | No checkpoint-only redispatch; record missing authority/policy and satisfy required promotion/escalation. No inferred permission. | C1, PHASE-11 |
-| T39 | Worker persists checkpoint then crashes before acceptance is established. | Classify interruption, not controlled yield; reconcile effects and promote full handoff before delivery resume. | C3, C4 |
+| T37 | Permitting profile; same item/run and scope; checkpoint plus exact controller-acceptance bindings; old writer quiescent/fenced; fresh review worker. Negative fixture has only a receipt/persisted checkpoint or a producer-supplied acceptance flag, with control continuity intact. | Positive fixture may continue without automatic full handoff, preserving run, authority and budget. Negative fixture inhibits continuation until actual acceptance and all other predicates are verified; it does not invent acceptance or classify a crash solely from the gap. | D02-ID1, C1; extends T21/T32 |
+| T38 | Same checkpoint, but permission is absent, profile is unauthorized for this scope/exchange, or its revision cannot be verified. Include approved context-manifest and runtime-capability-only fixtures. | No checkpoint-only redispatch; record missing authority/policy and satisfy required promotion/escalation. Neither context approval nor declared capability substitutes for explicit applicable profile permission. | C1, PHASE-11 |
+| T39 | Worker persists checkpoint then crashes before acceptance is established, including a receipt or producer-supplied acceptance flag without controller validation. | Classify interruption, not controlled yield; reconcile effects and promote full handoff before delivery resume. Do not manufacture or backdate acceptance to reclassify the crash. | C1, C3, C4 |
 | T40 | Unexpected controller crash; durable state is fully reconstructable. | Reconstruct state and still fulfill full-handoff promotion; no crash exemption inferred from reconstruction or journal persistence. | C2-C4 |
 | T41 | Valid accepted failure receipt with verified continuity and a permitted bounded retry; alternate fixture has ambiguous termination. | First fixture may retry under remaining allowance without automatic handoff; second enters interruption recovery and promotion. | C1-C3 |
 | T42 | PR creation succeeds but worker receipt is missing. | Discover/reuse existing operation; do not duplicate PR or fabricate worker success. Full handoff records evidence and unresolved verification. | C3, C5; extends T23 |
 | T43 | Old lease expires while prior worker may still mutate. | No replacement mutation until effective fencing or verified stop/isolation; generation increment alone fails. | C1, C4; extends T24 |
 | T44 | Full packet save succeeds but required coordination linkage fails; then controller restarts. | Promotion remains pending; reconcile same obligation/artifact, repair link and read back; no duplicate packet/effect or premature redispatch. | C4 |
 | T45 | Receipt says no handoff, but an authority decision, confidentiality change, external wait or closeout boundary is observed. | Controller overrides advisory flag; persist required full handoff and route to proper owner without broadening authority. | C2, PHASE-11 |
-| T46 | Claim, authorization, requirement, head or policy revision changes after checkpoint acceptance but before dispatch. | Reject stale acceptance as sufficient; revalidate affected evidence, reclassify boundary and inhibit action until satisfied. | C1, C4; extends T26 |
+| T46 | Claim, authorization, requirement, head or policy revision changes after checkpoint acceptance but before dispatch; or supplied acceptance binds another checkpoint revision, phase/attempt or next action. | Reject stale or mismatched acceptance as sufficient; revalidate affected evidence, reclassify boundary and inhibit action until satisfied. No acceptance copied across attempts or revisions. | C1, C4; extends T26 |
 | T47 | Retry/recovery with depleted or uncertain remaining allowance, including outstanding descendant reservations. | Preserve cumulative ledger; no reset or zero assumption; only already-authorized safe recovery within allowance, otherwise durable stop/escalation. | C3, C5; extends T08/T10/T19 |
 | T48 | One authorized scope decomposes into independently resumable delivery items. | Separate item/run/claim identities mapped to shared outcome/work scope and inherited budget; parent acceptance remains separate. | D02-ID1; extends T01/T34 |
 | T49 | Legacy adapter presents aggregate coordination-run ID as item `run_id`, or a consumer cannot validate required mapping. | Fail closed pending explicit versioned mapping; no silent rename, new authorization or budget. | D02-ID1, PHASE-11 |
@@ -147,11 +167,17 @@ These extend the existing T01-T36 catalog. All are **planned scenarios, not impl
 | T51 | Equivalent standalone and scheduled interruption/continuation fixtures. | Same identity, authority, evidence, promotion and completion decisions; scheduled malformed/missing records rejected, readable standalone output grants no exception. | PHASE-11; extends T28/T36 |
 | T52 | Cleanup requested during unresolved recovery or unverified handoff linkage. | Preserve the only recoverable evidence/unmerged work; cleanup cannot erase the promotion obligation or manufacture completion. | C4; extends T25/T35 |
 
-Fixture evidence should include immutable owner revisions, checkpoint acceptance, operation identity, effect disposition, claim/fencing proof, cumulative accounting, persisted packet/link readbacks and dispatch decisions. A trace alone is not the enforcement or promotion ledger.
+Fixture evidence should include immutable owner revisions, distinct receipt/checkpoint/controller-acceptance provenance and exact acceptance bindings, applicable permitting-profile authority, operation identity, effect disposition, claim/fencing proof, cumulative accounting, persisted packet/link readbacks and dispatch decisions. A trace alone is not the enforcement or promotion ledger.
 
 ## 8. Review disposition and consolidation
 
-The bounded decision is whether to adopt this strict distinction, the explicit identity mapping and the promotion-completion predicates. External governance interpretation or material standard changes require review by their accountable owner; this public proposal cannot supply that approval.
+**D02-r2 review disposition — Proposed:** retain D02-ID1 and D02-C2-C5; clarify D02-C1 and the phase evidence roles so a worker receipt or persisted checkpoint cannot self-attest controller acceptance. Strengthen T37-T39 and T46 with corresponding normal and negative fixtures. No test execution or technical adoption is implied by this disposition.
+
+**Remaining permitting-profile question:** which lifecycle/adoption profile, exact authorized revision, deployment scope and exchange types permit checkpoint-only continuation? This proposal does not select or approve such a profile. The gap does not block drafting or reviewing D02, but it blocks use of checkpoint-only continuation until the applicable permission is verified. Context-manifest approval and adoption of these technical clauses are not substitute permission records. Record any deployment-specific authority evidence in its configured owner system, without exporting private policy into this public proposal.
+
+**Compatibility:** existing adapters may preserve a checkpoint as a specialized stage receipt and may co-locate the conceptual evidence roles. Consumers must nevertheless validate the exact checkpoint/acceptance association and applicable profile permission under an explicitly supported contract version; presence of an older receipt or checkpoint alone cannot establish those guarantees. D01 still owns encoding, and D07 still owns storage/fencing implementation.
+
+The bounded decision is whether to adopt D02-r2's strict distinction, explicit identity mapping and promotion-completion predicates for an identified technical version and scope. External governance interpretation or material standard changes require review by their accountable owner; this public proposal cannot supply that approval.
 
 If adopted for a specified revision, consolidate D02-ID1/C1-C5 into SPEC, the phase additions into PHASE-CONTRACTS, and T37-T52 into DECISIONS-AND-CONFORMANCE. Retain this file as the superseded review rationale with an adoption reference, not as a second independently edited contract. Until then, base proposal clauses and this amendment are both Proposed; deployments remain governed by their currently approved requirements.
 

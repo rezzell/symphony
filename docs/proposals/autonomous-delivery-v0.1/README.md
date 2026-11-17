@@ -22,11 +22,13 @@ This package is a reviewable proposal, not an approved company operating standar
 | [Resources and telemetry](RESOURCES-AND-TELEMETRY.md) | Time, usage, provider profiles, allocation, routing, and OpenTelemetry investigation requirements. |
 | [Implementation plan](IMPLEMENTATION-PLAN.md) | Repository allocation, migration, work packages, dependencies, and acceptance gates. |
 | [Decisions and conformance](DECISIONS-AND-CONFORMANCE.md) | Confirmed design inputs, unresolved choices, and test scenarios. |
-| [D02 continuation review](D02-CONTINUATION-REVIEW.md) | Proposed D02-r1 amendment: controlled continuation, unexpected interruption, full-handoff promotion, explicit work-scope/item-run mapping, and planned T37-T52 scenarios. |
+| [D02 continuation review](D02-CONTINUATION-REVIEW.md) | Proposed D02-r2 amendment: controlled continuation, unexpected interruption, full-handoff promotion, explicit work-scope/item-run mapping, and planned T37-T52 scenarios. |
 
 ### First bounded review: D02
 
-Review [D02-r1](D02-CONTINUATION-REVIEW.md) against the relevant identity, continuity and phase clauses and the existing D02 entry. Preserve C01-C10; do not repeat the original harness investigation or select runtime technology as part of this review. D02-r1 contains proposed replacement/addition text, not effective contract changes or approval. The existing T01-T36 scenarios remain unchanged; T37-T52 are planned additions, not passing tests. Consolidation into the base proposal requires an explicit review disposition for an identified revision. No company standard is changed by publication.
+Review [D02-r2](D02-CONTINUATION-REVIEW.md) against the relevant identity, continuity and phase clauses and the existing D02 entry. Preserve C01-C10; do not repeat the original harness investigation or select runtime technology as part of this review. D02-r2 contains proposed replacement/addition text, not effective contract changes or approval. The existing T01-T36 scenarios remain unchanged; T37-T52 are planned additions, not passing tests. Consolidation into the base proposal requires an explicit review disposition for an identified revision. No company standard is changed by publication.
+
+D02-r2 distinguishes worker receipt, checkpoint content and controller acceptance, with exact revision/attempt bindings and additional negative fixtures within T37-T52. The applicable permitting lifecycle/adoption profile remains an explicit open question: context-selection approval, runtime capability and technical proposal adoption do not grant checkpoint-only continuation permission.
 
 ## Design boundary
 
