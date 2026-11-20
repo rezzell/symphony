@@ -129,7 +129,7 @@ Governing sources: pinned public sources in the [overview](README.md#sources), a
 
 Decisions already made: design inputs C01-C10 in [Decisions and conformance](DECISIONS-AND-CONFORMANCE.md). Unresolved decisions: D01-D11 in the same document.
 
-Artifacts changed by this proposal: six Markdown documents under this directory. Upstream root specification and executable sources are unchanged.
+Artifacts changed by this proposal: seven Markdown documents under this directory. Upstream root specification and executable sources are unchanged.
 
 Risks: ambiguous crash promotion, quota measurement, closeout races, stale mutation ownership, and accidental competing authorities. Do not hide these with a successful demo.
 
