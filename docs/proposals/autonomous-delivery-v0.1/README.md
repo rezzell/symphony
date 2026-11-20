@@ -22,13 +22,13 @@ This package is a reviewable proposal, not an approved company operating standar
 | [Resources and telemetry](RESOURCES-AND-TELEMETRY.md) | Time, usage, provider profiles, allocation, routing, and OpenTelemetry investigation requirements. |
 | [Implementation plan](IMPLEMENTATION-PLAN.md) | Repository allocation, migration, work packages, dependencies, and acceptance gates. |
 | [Decisions and conformance](DECISIONS-AND-CONFORMANCE.md) | Confirmed design inputs, unresolved choices, and test scenarios. |
-| [D02 continuation review](D02-CONTINUATION-REVIEW.md) | Proposed D02-r2 amendment: controlled continuation, unexpected interruption, full-handoff promotion, explicit work-scope/item-run mapping, and planned T37-T52 scenarios. |
+| [D02 continuation review](D02-CONTINUATION-REVIEW.md) | Historical D02-r2 rationale and immutable source; canonical clauses and planned T37–T52 are consolidated in the specification, phase contracts and conformance catalog. |
 
-### First bounded review: D02
+### D02 consolidation and remaining runtime gate
 
-Review [D02-r2](D02-CONTINUATION-REVIEW.md) against the relevant identity, continuity and phase clauses and the existing D02 entry. Preserve C01-C10; do not repeat the original harness investigation or select runtime technology as part of this review. D02-r2 contains proposed replacement/addition text, not effective contract changes or approval. The existing T01-T36 scenarios remain unchanged; T37-T52 are planned additions, not passing tests. Consolidation into the base proposal requires an explicit review disposition for an identified revision. No company standard is changed by publication.
+The bounded accountable-owner technical disposition dated **2026-11-19** approves [D02-r2 at c291ad893679d9eb52c5405c7281a17c5129ee32](https://github.com/rezzell/symphony/blob/c291ad893679d9eb52c5405c7281a17c5129ee32/docs/proposals/autonomous-delivery-v0.1/D02-CONTINUATION-REVIEW.md) for the **v0.1 proposed technical-contract scope only**. [The disposition and source-to-target mapping](DECISIONS-AND-CONFORMANCE.md#d02-bounded-technical-disposition-and-source-mapping) identify its exact scope and exclusions. Identity/continuity clauses now live in SPEC, phase evidence in PHASE-CONTRACTS, and planned T37–T52 in the canonical conformance catalog. C01–C10 and T01–T36 remain unchanged. [D02 review rationale](D02-CONTINUATION-REVIEW.md) is historical, not another independently maintained contract.
 
-D02-r2 distinguishes worker receipt, checkpoint content and controller acceptance, with exact revision/attempt bindings and additional negative fixtures within T37-T52. The applicable permitting lifecycle/adoption profile remains an explicit open question: context-selection approval, runtime capability and technical proposal adoption do not grant checkpoint-only continuation permission.
+The package remains **Proposed**, with no whole-specification approval, runtime implementation, merge, deployment, release, outcome acceptance, spending increase or company-standard amendment. All 52 scenarios remain planned, not passing executable tests. The applicable permitting lifecycle/adoption profile, authorized revision, deployment scope and exchange types remain unresolved: context-selection approval, runtime capability and technical consolidation do not grant checkpoint-only continuation permission. Other blocking decisions remain open.
 
 ## Design boundary
 
@@ -54,7 +54,7 @@ Use these classifications when extending the proposal:
 - **Observed:** supported by a cited source or verified system state.
 - **Derived:** an architectural inference from observations.
 - **Proposed:** a recommendation or contract detail awaiting review.
-- **Ratified:** reserved for a bounded decision with an authorized approval record. This change does not mark any new governance artifact Ratified or Approved.
+- **Ratified:** reserved for a bounded decision with an authorized approval record. The scoped D02 technical disposition is projected above; it does not mark a company governance artifact or the whole specification Approved.
 
 The confirmed discussion inputs are recorded separately in [Decisions and conformance](DECISIONS-AND-CONFORMANCE.md). Open questions must not be silently promoted into implementation defaults.
 
@@ -83,4 +83,4 @@ Public source references are provided for reproducibility; private governance so
 
 Only proposal documentation is supplied by this change. Schemas, validators, adapters, executable conformance tests, dashboards, and the Rust host are planned deliverables. No implementation issue is automatically admitted for autonomous execution, and no company standard is superseded.
 
-The next action is the bounded D02 review and explicit disposition of its identity, continuity and promotion recommendations. Other blocking decisions remain open. Any later contract extraction or implementation work package needs separately verified scope, acceptance criteria, permitted mutations and finite allowances; this plan does not authorize execution of all milestones.
+D02 technical direction has been consolidated for the bounded v0.1 proposed scope. Before checkpoint-only runtime use, verify a separately authorized permitting profile and executable conformance. Other blocking decisions remain open. Any later contract extraction or implementation work package needs separately verified scope, acceptance criteria, permitted mutations and finite allowances; this plan does not authorize execution of all milestones.

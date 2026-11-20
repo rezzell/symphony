@@ -6,7 +6,7 @@ Parent: [Proposal overview](README.md)
 
 ## 1. How to read this register
 
-C-records capture owner-confirmed design direction from the discussion authorizing this proposal. They are requirements inputs, not blanket approval of this document, production deployment, publication of private policy, or all suggested algorithms. D-records are unresolved choices with proposed recommendations. No record here changes an existing company's Approved standard by itself.
+C-records capture owner-confirmed design direction from the discussion authorizing this proposal. They are requirements inputs, not blanket approval of this document, production deployment, publication of private policy, or all suggested algorithms. D-records distinguish unresolved choices from bounded dispositions; technical direction does not supply runtime permission. No record here changes an existing company's Approved standard by itself.
 
 Observed implementation claims are grounded in the pinned [source baseline](README.md#sources). Derived conclusions and proposed changes are distinguished from those observations. A final decision needs a bounded approval record and corresponding contract/test update; do not mark an entire proposal Approved merely because one decision was accepted.
 
@@ -30,7 +30,7 @@ Observed implementation claims are grounded in the pinned [source baseline](READ
 | ID | Decision needed | Proposed recommendation | Required before |
 | --- | --- | --- | --- |
 | D01 | Contract encoding, framing, canonicalization, compatibility and acknowledgement | Versioned JSON interchange and JSON Schema; YAML/Markdown authoring and human rendering; transport-neutral behavior. Pin versions and reject unsupported required semantics. Exact schema/transport remains unselected. | W02 schemas and scheduled adapter |
-| D02 | Controlled yield versus crash versus full coordination handoff; coordination-store binding | Preserve checkpoint-only controlled continuation; recover unexpected failures first and promote on the applicable actual boundary. Until approved clarification, obey the stricter existing policy. No runtime journal silently replaces coordination authority. | Autonomous crash recovery/adoption |
+| D02 | Technical direction resolved for v0.1 proposed contracts; applicable permitting lifecycle/adoption profile remains unresolved | Consolidate the bounded D02-r2 direction below: item-run mapping, exact controller acceptance, interruption recovery and full-handoff promotion. No runtime journal silently replaces coordination authority. | Verified profile authority before checkpoint-only runtime continuation; executable conformance before adoption |
 | D03 | Allocation evaluation horizon, quota-window mapping, fairness tolerance and tie-breaks | Align observation with declared provider allowance windows where meaningful, retain per-work consumption across resets, and use explicit normalization for unlike windows/units. Compare least-projected-utilization with deficit/fair-share alternatives using fixtures. Borrowing is already settled. | Production pro rata allocator |
 | D04 | Remaining phase defaults, remediation allocation, parent/child phase budgets and overall delivery ceiling | Shared budget-scope phase clocks; retries/children do not replenish. Require finite configured limits for unspecified phases. Do not invent a global 20-minute or 140-minute rule. Decide the overall cap independently. | Full lifecycle admission |
 | D05 | Usage observability, opaque metering, uncertainty margins, and external use of shared subscriptions | Separate usage, quota capacity and accounting estimates; declare confidence/lag and conservative reservations. Refuse guarantees the adapter cannot enforce. Validate actual metering before choosing precision and tolerances. | Provider-specific hard-limit claims |
@@ -42,6 +42,25 @@ Observed implementation claims are grounded in the pinned [source baseline](READ
 | D11 | GitHub eligibility/coordination mapping, cleanup/closeout protocol, migration and publication boundaries | Map existing authoritative states explicitly; keep coordination references non-authoritative; persist closeout obligation before terminal transitions; preserve unmerged work. Promote portable contracts into ai-sdlc once, with versioned references here and protected deployment overlays. | Pilot mutations, cleanup and adoption |
 
 Optional phase-level scheduling, distributed active controllers, hosted multi-tenancy, automatic deployment, and model-assisted routing are not initial prerequisites. Absence of those features must not weaken the baseline contracts.
+
+### D02 bounded technical disposition and source mapping
+
+**Bounded accountable-owner disposition, 2026-11-19:** D02-r2 at commit `c291ad893679d9eb52c5405c7281a17c5129ee32`, blob `2fd2ce432a13c8139793829eefc563a246b795ee`, is approved for the **v0.1 proposed technical-contract scope only**. The [immutable review source](https://github.com/rezzell/symphony/blob/c291ad893679d9eb52c5405c7281a17c5129ee32/docs/proposals/autonomous-delivery-v0.1/D02-CONTINUATION-REVIEW.md) supplies the direction consolidated here. This public projection records exact technical scope and exclusions; private approval provenance remains in its owner system.
+
+This does not approve the whole specification, checkpoint-only runtime permission, runtime implementation, integration/merge, deployment, release, outcome acceptance, new spending or a company-standard amendment. It selects no lifecycle/adoption profile, wire encoding, storage/fencing implementation, language or shutdown reserve. C01–C10 and other unresolved decisions remain unchanged. Technical consolidation does not authorize a runtime exchange; its applicable permitting-profile revision, deployment scope and exchange types must still be verified.
+
+| D02-r2 source | Canonical v0.1 proposal destination | Planned scenarios |
+| --- | --- | --- |
+| D02-ID1 | [SPEC identity model](SPEC.md#4-identity-model): refined identity table, ID-01/02 preserved, ID-03 mapping and compatibility | T48–T49 |
+| D02-C1 | [SPEC continuity](SPEC.md#6-continuity-and-promotion): CONT-01, all six predicates, evidence roles and exact acceptance bindings | T37–T39, T41, T43, T46, T50 |
+| D02-C2 | SPEC CONT-02: all existing boundaries plus every unexpected interruption | T40–T41, T45 |
+| D02-C3 | SPEC CONT-04: classification, recovery observations and authorized recovery limits | T39–T42, T47 |
+| D02-C4 | SPEC CONT-06: stable promotion obligation, persistence/link/read-back and redispatch gates | T40, T44, T46, T50, T52 |
+| D02-C5 | SPEC CONT-05: preserved no-effects assumption prohibition and cumulative accounting | T42, T47, T50 |
+| Phase evidence additions | [PHASE-CONTRACTS](PHASE-CONTRACTS.md#8-continuation-and-recovery-evidence): evidence matrix and PHASE-11; PHASE-05/08 amended | T38, T45, T49, T51 |
+| T37–T52 | [Canonical conformance catalog](#4-test-obligations), following unchanged T01–T36 | All remain planned, not executed |
+
+The [historical review rationale](D02-CONTINUATION-REVIEW.md) retains comparison evidence and examples, with canonical clause links replacing the proposed amendment payload. Existing ai-sdlc item-run semantics remain compatible through explicit versioned mappings; older consumers unable to validate required mappings or acceptance evidence fail closed.
 
 ## 4. Test obligations
 
@@ -85,6 +104,31 @@ These are a **planned behavioral conformance catalog**, not executable tests del
 | T34 | All child issues close but parent outcome acceptance is absent. Report delivery progress, not accepted outcome or release. | LIFE-03/04 |
 | T35 | Cancellation, rollback or cleanup encounters user-owned/unmerged work. Preserve it and report recoverability; do not delete for queue convenience. | HOST-06, REC-03 |
 | T36 | Malformed receipt, unsupported schema version or missing required verification. Reject scheduled continuation with an actionable reason, not a fabricated success. | PHASE-02/03/10, COMPAT-01 |
+
+### D02 continuation and recovery scenarios
+
+T37–T52 extend the unchanged T01–T36 catalog. They are **planned scenarios, not implemented or passing tests**. Synthetic identifiers only. Each test must assert both permitted behavior and forbidden effects.
+
+| ID | Given / when | Required observable result | Clauses |
+| --- | --- | --- | --- |
+| T37 | Permitting profile; same item/run and scope; checkpoint plus exact controller-acceptance bindings; old writer quiescent/fenced; fresh review worker. Negative fixture has only a receipt/persisted checkpoint or a producer-supplied acceptance flag, with control continuity intact. | Positive fixture may continue without automatic full handoff, preserving run, authority and budget. Negative fixture inhibits continuation until actual acceptance and all other predicates are verified; it does not invent acceptance or classify a crash solely from the gap. | ID-03, CONT-01; extends T21/T32 |
+| T38 | Same checkpoint, but permission is absent, profile is unauthorized for this scope/exchange, or its revision cannot be verified. Include approved context-manifest and runtime-capability-only fixtures. | No checkpoint-only redispatch; record missing authority/policy and satisfy required promotion/escalation. Neither context approval nor declared capability substitutes for explicit applicable profile permission. | CONT-01, PHASE-11 |
+| T39 | Worker persists checkpoint then crashes before acceptance is established, including a receipt or producer-supplied acceptance flag without controller validation. | Classify interruption, not controlled yield; reconcile effects and promote full handoff before delivery resume. Do not manufacture or backdate acceptance to reclassify the crash. | CONT-01, CONT-04, CONT-06 |
+| T40 | Unexpected controller crash; durable state is fully reconstructable. | Reconstruct state and still fulfill full-handoff promotion; no crash exemption inferred from reconstruction or journal persistence. | CONT-02/04/06 |
+| T41 | Valid accepted failure receipt with verified continuity and a permitted bounded retry; alternate fixture has ambiguous termination. | First fixture may retry under remaining allowance without automatic handoff; second enters interruption recovery and promotion. | CONT-01/02/04 |
+| T42 | PR creation succeeds but worker receipt is missing. | Discover/reuse existing operation; do not duplicate PR or fabricate worker success. Full handoff records evidence and unresolved verification. | CONT-04, CONT-05; extends T23 |
+| T43 | Old lease expires while prior worker may still mutate. | No replacement mutation until effective fencing or verified stop/isolation; generation increment alone fails. | CONT-01, CONT-06; extends T24 |
+| T44 | Full packet save succeeds but required coordination linkage fails; then controller restarts. | Promotion remains pending; reconcile same obligation/artifact, repair link and read back; no duplicate packet/effect or premature redispatch. | CONT-06 |
+| T45 | Receipt says no handoff, but an authority decision, confidentiality change, external wait or closeout boundary is observed. | Controller overrides advisory flag; persist required full handoff and route to proper owner without broadening authority. | CONT-02, PHASE-11 |
+| T46 | Claim, authorization, requirement, head or policy revision changes after checkpoint acceptance but before dispatch; or supplied acceptance binds another checkpoint revision, phase/attempt or next action. | Reject stale or mismatched acceptance as sufficient; revalidate affected evidence, reclassify boundary and inhibit action until satisfied. No acceptance copied across attempts or revisions. | CONT-01, CONT-06; extends T26 |
+| T47 | Retry/recovery with depleted or uncertain remaining allowance, including outstanding descendant reservations. | Preserve cumulative ledger; no reset or zero assumption; only already-authorized safe recovery within allowance, otherwise durable stop/escalation. | CONT-04, CONT-05; extends T08/T10/T19 |
+| T48 | One authorized scope decomposes into independently resumable delivery items. | Separate item/run/claim identities mapped to shared outcome/work scope and inherited budget; parent acceptance remains separate. | ID-03; extends T01/T34 |
+| T49 | Legacy adapter presents aggregate coordination-run ID as item `run_id`, or a consumer cannot validate required mapping. | Fail closed pending explicit versioned mapping; no silent rename, new authorization or budget. | ID-03, PHASE-11 |
+| T50 | Duplicate checkpoint acknowledgement or promotion-completion message is replayed. | Idempotent acceptance/publication; no duplicate dispatch, effect, charge or evidence loss; new effects still require their own identity/accounting. | CONT-01, CONT-06, CONT-05 |
+| T51 | Equivalent standalone and scheduled interruption/continuation fixtures. | Same identity, authority, evidence, promotion and completion decisions; scheduled malformed/missing records rejected, readable standalone output grants no exception. | PHASE-11; extends T28/T36 |
+| T52 | Cleanup requested during unresolved recovery or unverified handoff linkage. | Preserve the only recoverable evidence/unmerged work; cleanup cannot erase the promotion obligation or manufacture completion. | CONT-06; extends T25/T35 |
+
+Fixture evidence should include immutable owner revisions, distinct receipt/checkpoint/controller-acceptance provenance and exact acceptance bindings, applicable permitting-profile authority, operation identity, effect disposition, claim/fencing proof, cumulative accounting, persisted packet/link readbacks and dispatch decisions. A trace alone is not the enforcement or promotion ledger.
 
 ## 5. Initial measurable acceptance
 

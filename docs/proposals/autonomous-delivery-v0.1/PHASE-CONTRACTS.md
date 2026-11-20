@@ -20,6 +20,7 @@ stage_dispatch:
   contract: "sdlc.implementation@0.1-proposed"
   authorization_ref: {owner: knowledge, locator: "urn:example:approval:42", revision: "4"}
   outcome_ref: "urn:example:outcome:42"
+  work_scope_ref: {owner: knowledge, locator: "urn:example:scope:42", revision: "4"}
   delivery_item_ref: "urn:example:issue:101"
   budget_scope_id: "budget-outcome-42"
   run_id: "run-101"
@@ -100,7 +101,7 @@ Future entrypoints must map to a contract rather than bypassing this catalog. A 
 
 ## 5. Checkpoint versus full handoff
 
-**PHASE-05:** A checkpoint records the phase result, revision references, verification posture, findings, remaining/reserved budget references, next permitted action, and continuity correlation. It can be persisted and consumed by a new runtime without creating a new workboard item when the existing scope and continuation contract remain valid.
+**PHASE-05:** A checkpoint records the phase result, revision references, verification posture, findings, remaining/reserved budget references, next permitted action, and continuity correlation. A new runtime may consume it without a new workboard item only when every [CONT-01](SPEC.md#6-continuity-and-promotion) predicate holds, including exact positive controller acceptance, applicable permitting-profile authority and safe ownership. Receipt, checkpoint and controller-acceptance provenance MUST remain distinguishable even when co-located. A persisted checkpoint or producer assertion is not self-accepted; missing acceptance alone does not prove interruption.
 
 **PHASE-06:** A full handoff adds the material coordination context: goal and scope, verified versus unverified work, classified decisions, constraints, artifacts changed, verification omissions, unresolved risks, claim release/transfer, owner references, and the exact decision or external predicate needed to continue. It does not copy every intra-run checkpoint or the conversation transcript.
 
@@ -133,7 +134,7 @@ The common full-handoff fields defined in [SPEC.md](SPEC.md) remain required; th
 
 A deadline, quota reset, new trace, or provider change is not itself decision approval. External capacity recovery can satisfy a declared resource predicate but cannot replenish an exhausted work authorization.
 
-**PHASE-08:** Controlled runtime changes may reuse a valid checkpoint. Lost receipts require inspecting effects. Inability to reconstruct safe continuation yields an explicit indeterminate/recovery result, with promotion according to policy. No agent may synthesize a confident success merely to satisfy the envelope.
+**PHASE-08:** Controlled runtime changes may reuse a checkpoint only under CONT-01's accepted-checkpoint and pre-dispatch revalidation predicates. Lost receipts require inspecting effects. Unexpected interruption enters [CONT-04 recovery](SPEC.md#6-continuity-and-promotion), with ordinary delivery redispatch inhibited until CONT-06 full-handoff promotion and reconciliation are complete, even when state is reconstructable. The recovery actor records its own observations, not an invented worker receipt or success. A valid accepted failure receipt with verified continuity may support a bounded retry only when all continuation predicates still hold.
 
 ## 7. Transport and projection rules
 
@@ -144,3 +145,20 @@ Interactive mode should present a compact outcome, evidence, remaining risk, and
 **PHASE-10:** Unknown required fields or versions fail closed. Harmless optional extensions may be retained or ignored according to the declared compatibility policy. Pin contract and policy revisions for an admitted attempt; revalidate material changes rather than silently switching semantics mid-flight.
 
 The initial implementation should validate envelopes and owner evidence while keeping judgment-heavy planning/review in skills. Moving a deterministic transition check into Rust must not change its meaning.
+
+## 8. Continuation and recovery evidence
+
+These conceptual requirements extend the illustrative forms above; they are not a selected wire schema. D01 defines encoding and D07 storage/fencing mechanisms. The canonical acceptance bindings and six eligibility predicates are in [CONT-01](SPEC.md#6-continuity-and-promotion).
+
+| Record | Required evidence |
+| --- | --- |
+| Dispatch | Explicit work-scope/item-run mapping; contract, policy and authorization revisions; ownership safety and ledger/reservation references; bounded next action. When consuming a predecessor checkpoint, reference that checkpoint and its acceptance evidence. An initial dispatch does not require acceptance of a future checkpoint. |
+| Worker receipt | Producer and dispatched phase/attempt identity; immutable input/output and evidence references. Existing `full_handoff_required` remains advisory evidence. The controller independently evaluates triggers; a false flag cannot suppress a required handoff. |
+| Intra-run checkpoint | Checkpoint identity/revision; carried or referenced stage receipt; continuation state required by CONT-01. Do not equate successful persistence with positive controller acceptance. |
+| Controller acceptance record | The exact bindings and positive validation evidence required by CONT-01, including the applicable permitting-profile revision and bounded next transition. Keep producer assertions distinct from receiver/controller validation. |
+| Recovery observation | `record_kind` distinct from worker receipt; observer identity; interrupted run/phase/attempt; failure/event identity; last verified checkpoint; actual observation time; observed/unknown effects; ownership and accounting reconciliation; next safe action. No invented worker completion timestamp or success. |
+| Promotion obligation | Stable obligation ID; trigger(s); run/scope identities; policy revision; packet artifact/version; required coordination targets; persistence/link verification; claim disposition; resume predicates. |
+
+**PHASE-11:** Reject continuation when required identity mapping, checkpoint acceptance, effect disposition, ownership safety, accounting, policy or promotion evidence cannot be validated. Scheduled exchanges require validated structured records. Standalone operation applies the same predicates and may additionally present a human-readable explanation. A human-readable reconstruction does not substitute for an absent required structured record.
+
+Retain existing receipt statuses; do not disguise a recovery observation as `succeeded`. A recovery observation may establish that a particular side effect happened without proving phase completion, review, integration, closeout, release or outcome acceptance.
